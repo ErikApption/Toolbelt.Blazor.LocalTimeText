@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Toolbelt.Blazor.Globalization</RootNamespace>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+  </PropertyGroup>
+
+  <Import Project="../Version.props" />
+
+  <ItemGroup>
+    <Content Remove="bundleconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="Toolbelt.Blazor.LocalTimeText.Server" />
+    <InternalsVisibleTo Include="Toolbelt.Blazor.LocalTimeText.Test" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bundleconfig.json" />
+    <Content Update="ClientScripts/*.js" Pack="false" />
+    <Content Update="tsconfig.json" Pack="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+    <PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" >
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.6.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

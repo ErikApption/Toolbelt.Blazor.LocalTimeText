@@ -1,0 +1,147 @@
+﻿@using SharedComponents.Data
+@using SharedComponents.Models
+@inject ILocalTimeZone LocalTimeZone
+
+<PageTitle>Toolbelt Blazor Online Conference (@RenderMode Render Mode)</PageTitle>
+
+<div class="root">
+
+    <nav>
+        <div class="banner">Toolbelt Blazor Online Conference</div>
+    </nav>
+
+    <header>
+        <h1>Toolbelt Blazor Online Conference</h1>
+        <h2>This is a demonstration page of a fictional online conference.</h2>
+        <h2>Monday, June 12, 2017</h2>
+    </header>
+
+    <main>
+
+        <section class="event-date">
+            <h2>
+                Monday, June 12, 2017<br />
+                9:45 AM - 4:15 PM EDT (USA)
+            </h2>
+
+            <div class="local-event-time accent-bar">
+
+                <div class="column">
+                    <LocalTimeZoneSelector />
+
+                    <span class="local-event-time-text">
+                        <LocalTimeText Date="2017/01/12" Time="9:45 AM" TimeZone="EDT" />
+                        -
+                        <LocalTimeText Date="2017/01/12" Time="4:15 PM" TimeZone="EDT" />
+
+                        (@_localTimeZone?.Id)
+                    </span>
+
+                    <span class="dropdown-icon">></span>
+
+
+                </div>
+            </div>
+
+        </section>
+
+        <section class="schedule">
+
+            <h2 class="accent-bar">
+                Schedule
+            </h2>
+
+            <table>
+                @foreach (var session in this._sessions)
+                {
+                    <tr @key="session.Id">
+                        <td>
+                            <div>@session.StartTime</div>
+                            <div class="local-time">
+                                (<LocalTimeText Date="2017/01/12" Time="4:15 PM" TimeZone="EDT" />
+                                @_localTimeZone?.Id)
+                            </div>
+                        </td>
+                        <td>@session.Speaker</td>
+                        <td>@session.Title</td>
+                    </tr>
+                }
+            </table>
+
+        </section>
+
+        <section class="sessions">
+
+            <h2 class="accent-bar">
+                Sessions
+            </h2>
+
+            @foreach (var session in this._sessions)
+            {
+                <div @key="session.Id" class="session">
+                    @if (session.Description != "")
+                    {
+                        <div class="profile column">
+                            <img src="@($"_content/SharedComponents/speaker-{session.Id}.png")" alt="@session.Speaker" />
+                            <h5>@session.Speaker</h5>
+                        </div>
+                    }
+                    <div class="details column">
+
+                        <div class="session-time">
+                            <h5>
+                                @session.StartTime.TrimEnd('A', 'P', 'M') - @session.EndTime EDT
+                            </h5>
+                            <div>
+                                (<LocalTimeText Date="2017/01/12" Time="@session.StartTime" TimeZone="EDT" Format="h:mm" />
+                                -
+                                <LocalTimeText Date="2017/01/12" Time="@session.EndTime" TimeZone="EDT" />
+                                (@_localTimeZone?.Id))
+                            </div>
+
+                        </div>
+
+
+                        <h3>@session.Title</h3>
+                        @if (session.Description != "")
+                        {
+                            <p class="description">@session.Description</p>
+                        }
+                    </div>
+                </div>
+            }
+
+        </section>
+    </main>
+
+    <footer>
+        <ul>
+            <li>This is a fictional online conference page created for demonstration purposes.</li>
+            <li>All of speaker images are generated using the Bing image creater tool. The images are not real.</li>
+        </ul>
+    </footer>
+
+</div>
+
+@code
+{
+    [Parameter]
+    public string? RenderMode { get; set; }
+
+    private readonly IEnumerable<Session> _sessions = SessionList.Sessions;
+
+    private TimeZoneInfo? _localTimeZone;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.LocalTimeZone.LocalTimeZoneChanged += this.OnTimeZoneChanged;
+        this._localTimeZone = await this.LocalTimeZone.GetLocalTimeZoneAsync("EDT");
+    }
+
+    private async Task OnTimeZoneChanged(LocalTimeZoneEventArgs args)
+    {
+        this._localTimeZone = args.TimeZone;
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

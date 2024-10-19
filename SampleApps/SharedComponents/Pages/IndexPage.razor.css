@@ -1,0 +1,157 @@
+﻿.root {
+    --nav-bar-height: 52px;
+    --max-width: 800px;
+    --accent-color: #7800ff;
+}
+
+h1, h2, h3, h4, h5 {
+    text-align: center;
+    position: relative;
+}
+
+nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: var(--nav-bar-height);
+    line-height: var(--nav-bar-height);
+    background-color: #444;
+    z-index: 1;
+}
+
+    nav .banner {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+header {
+    margin-top: calc(var(--nav-bar-height) + 24px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #380064;
+    padding: 24px 80px 62px 80px;
+}
+
+    header h2 {
+        margin: 0;
+        max-width: 380px;
+    }
+
+section {
+    margin: 48px 0;
+}
+
+    section h2 {
+        margin-bottom: 40px;
+    }
+
+.accent-bar::after {
+    content: "";
+    border-bottom: solid 4px var(--accent-color);
+    position: absolute;
+    inset: calc(100% + 12px) 0 auto 0;
+    width: 100px;
+    margin: auto;
+}
+
+/* ---- Event Date ---- */
+.event-date h2 {
+    margin-bottom: 12px;
+}
+
+.local-event-time {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+    .local-event-time .column {
+        position: relative;
+    }
+
+        .local-event-time .column .local-event-time-text {
+            position: relative;
+            display: inline-block;
+            height: 100%;
+        }
+
+        .local-event-time .column .dropdown-icon {
+            transform: rotate(90deg);
+            font-family: monospace;
+            border: solid 2px #666;
+            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .local-event-time .column ::deep form {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            bottom: 0;
+            opacity: 0.01;
+        }
+
+            .local-event-time .column ::deep form select {
+                height: 100%;
+            }
+
+
+/* ---- Schedule ---- */
+section .schedule td .local-time {
+    font-size: 14px;
+}
+
+/* ---- Sessions ---- */
+
+section.sessions {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.session {
+    background-color: #38384a;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+    .session h3, .session h5, .session p {
+        margin: 0;
+    }
+
+    .session h5 {
+        font-size: 18px;
+    }
+
+    .session .column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .session .profile.column {
+    }
+
+        .session .profile.column img {
+            max-width: 128px;
+            border-radius: 12px;
+        }
+
+    .session .details.column {
+        flex: 1;
+        /*        
+        min-width: 300px;
+*/
+    }

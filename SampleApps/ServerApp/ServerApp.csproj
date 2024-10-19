@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharedComponents\SharedComponents.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\LocalTimeText.Server\Toolbelt.Blazor.LocalTimeText.Server.csproj" />
+    <!--<PackageReference Include="Toolbelt.Blazor.LocalTimeText.Server" Version="1.0.0" />-->
+  </ItemGroup>
+
+</Project>

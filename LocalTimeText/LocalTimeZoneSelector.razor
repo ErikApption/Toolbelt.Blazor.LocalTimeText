@@ -1,0 +1,61 @@
+@inject ILocalTimeZone LocalTimeZone
+
+<EditForm Model="Model" Enhance FormName="@this.FormName" OnValidSubmit="OnValidSubmit">
+    <button type="submit" style="display:none;">Submit</button>
+
+    <select title="Select the time zone."  @attributes="AdditionalAttributes" name="Model.TimeZoneId" @bind="@Model.TimeZoneId" oninput="setTimeout(() => this.closest('form').querySelector('button').click(),0)">
+        @foreach (var timeZone in _timeZones)
+        {
+            <text>@this.ItemTemplate?.Invoke(new() { TimeZoneInfo = timeZone })</text>
+        }
+    </select>
+</EditForm>
+
+@code
+{
+    /// <summary>
+    /// Gets or sets the template for the local time zone selector items.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<LocalTimeZoneSelectorTemplateContext>? ItemTemplate { get; set; } = (context) =>
+        @<option value="@context.TimeZoneInfo.Id">@context.TimeZoneInfo.DisplayName</option>;
+
+    /// <summary>
+    /// Gets or sets the form name. When not specified, the default value is "local-timezone-selector-form".<br/>
+    /// If you want to use multiple instances of this component in the same page, you must specify a unique value for each instance.
+    /// </summary>
+    [Parameter]
+    public string? FormName { get; set; } = "local-timezone-selector-form";
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private class LocalTimeZoneSelectorModel
+    {
+        public string? TimeZoneId { get; set; }
+    }
+
+    [SupplyParameterFromForm]
+    private LocalTimeZoneSelectorModel Model { get; set; } = new();
+
+    private IEnumerable<TimeZoneInfo> _timeZones = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        this._timeZones = TimeZoneInfo.GetSystemTimeZones()
+            .Select(tz => this.LocalTimeZone.TimeZoneIdMapper.TimeZoneIdToTimeZoneInfo(tz.Id))
+            .ToArray();
+
+        if (this.Model.TimeZoneId is null)
+        {
+            var currntTimeZone = await this.LocalTimeZone.GetLocalTimeZoneAsync(null);
+            this.Model = new() { TimeZoneId = currntTimeZone.Id };
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (this.Model.TimeZoneId is null) throw new InvalidOperationException();
+        await this.LocalTimeZone.SetLocalTimeZoneAsync(this.Model.TimeZoneId);
+    }
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "wwwroot/script.min.js",
+    "inputFiles": [
+      "ClientScripts/script.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/initialize-local-timezone.min.js",
+    "inputFiles": [
+      "ClientScripts/initialize-local-timezone.js"
+    ]
+  }
+]

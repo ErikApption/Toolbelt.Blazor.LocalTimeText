@@ -1,0 +1,156 @@
+@using System.Text.RegularExpressions
+@implements IDisposable
+@inject ILocalTimeZone LocalTimeZone
+
+@if (ChildContent is not null && _context is not null)
+{
+    <text>@ChildContent(_context)</text>
+}
+
+@code {
+
+    /// <summary>
+    /// The date part of the time to display, like "2021-12-31", in the time zone specified by the <see cref="TimeZone"/> parameter.<br/>
+    /// This parameter is optional. If not provided, the current date will be used.<br/>
+    /// However, when the specified time zone has daylight saving time changes, this parameter is essential to the correct time conversion.
+    /// </summary>
+    [Parameter]
+    public string? Date { get; set; }
+
+    /// <summary>
+    /// The time to display, like "9:00 AM", in the time zone specified by the <see cref="TimeZone"/> parameter.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string? Time { get; set; }
+
+    /// <summary>
+    /// The time zone ID for the <see cref="Time"/> parameter, like "PST", "Pacific Standard Time", "America/Los_Angeles", etc.<br/>
+    /// This parameter is optional. If not provided, the UTC time zone will be used.
+    /// </summary>
+    [Parameter]
+    public string? TimeZone { get; set; }
+
+    /// <summary>
+    /// The template to customize rendering the time text.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<LocalTimeTextTemplateContext>? ChildContent { get; set; } = (context) => @<text>@context.Capitalize(context.Value.ToString(context.Format))</text>;
+
+    /// <summary>
+    /// The format to display the time text. By default, it will infer the format from the <see cref="Time"/> parameter.
+    /// </summary>
+    [Parameter]
+    public string? Format { get; set; }
+
+    private TimeZoneInfo _localTimeZone = TimeZoneInfo.Utc;
+
+    private LocalTimeTextTemplateContext? _context;
+
+    private bool _isInitialized = false;
+
+    private DateTimeOffset _localDateTimeOffset;
+
+    private string _format = "";
+
+    private Func<string, string> _capitalizer = (s => s);
+
+    private string? _prevTime;
+
+    private string? _prevTimeZone;
+
+    private string? _prevFormat;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this._localTimeZone = await this.LocalTimeZone.GetLocalTimeZoneAsync(this.TimeZone);
+        this.UpdateLocalDateTimeOffset();
+        this.UpdateFormat();
+        this.UpdateContext();
+
+        this.LocalTimeZone.LocalTimeZoneChanged += OnLocalTimeChanged;
+        _isInitialized = true;
+    }
+
+    private async Task OnLocalTimeChanged(LocalTimeZoneEventArgs args)
+    {
+        this._localTimeZone = args.TimeZone;
+        await this.InvokeAsync(() =>
+        {
+            this.UpdateLocalDateTimeOffset();
+            this.UpdateFormat();
+            this.UpdateContext();
+
+            this.StateHasChanged();
+        });
+    }
+
+    private void UpdateLocalDateTimeOffset()
+    {
+        var srcDateTime = DateTime.TryParse(((this.Date ?? "") + " ").TrimStart() + this.Time, out var dt) ? dt : throw new FormatException($"The value '{this.Time}' is not a valid date time format.");
+        var srcTimeZone = this.LocalTimeZone.TimeZoneIdMapper.TimeZoneIdToTimeZoneInfo(this.TimeZone ?? "(null)");
+        var localDateTime = TimeZoneInfo.ConvertTime(srcDateTime, srcTimeZone, this._localTimeZone);
+        this._localDateTimeOffset = new DateTimeOffset(localDateTime, this._localTimeZone.GetUtcOffset(localDateTime));
+    }
+
+    private void UpdateFormat()
+    {
+        var (inferedFormat, capitalizer) = InferFormat(this.Time);
+        this._format = string.IsNullOrEmpty(this.Format) ? inferedFormat : this.Format;
+        this._capitalizer = capitalizer;
+    }
+
+    private void UpdateContext()
+    {
+        this._prevTime = this.Time;
+        this._prevTimeZone = this.TimeZone;
+        this._prevFormat = this.Format;
+
+        _context = new()
+            {
+                LocalTimeZone = this._localTimeZone!,
+                Value = this._localDateTimeOffset,
+                Format = this._format,
+                Capitalize = this._capitalizer
+            };
+    }
+
+    internal static (string Format, Func<string, string> Capitalizer) InferFormat(string? timeText)
+    {
+        var match = Regex.Match(timeText ?? "", @"(?<hour>\d{1,2}):(?<min>\d{2})(?<sec>:\d{2})?(?<tp>[ ]*(AM|PM))?", RegexOptions.IgnoreCase);
+        if (!match.Success) return ("h:mm tt", (s => s));
+
+        var timePeriod = match.Groups["tp"];
+        var hasTimePeriod = timePeriod.Success;
+        var timePeriodValue = timePeriod.ValueSpan;
+        var paddingBeforeTp = hasTimePeriod ? timePeriod.ValueSpan.Length - 2 : 0;
+
+        var hour = match.Groups["hour"].ValueSpan;
+        var hourFormat = hour.Length > 1 && hour[0] == '0' ? (hasTimePeriod ? "hh" : "HH") : (hasTimePeriod ? "h" : "H");
+
+        Func<string, string> capitalizer =
+            !hasTimePeriod ? (s => s) :
+            timePeriodValue[timePeriodValue.Length - 1] == 'M' ? (s => s.ToUpper()) :
+            (s => s.ToLower());
+
+        return (
+            Format: $"{hourFormat}:mm" + (hasTimePeriod ? (new string(' ', paddingBeforeTp) + "tt") : ""),
+            Capitalizer: capitalizer
+        );
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (!_isInitialized) return;
+        if (this.Time == _prevTime && this.TimeZone == _prevTimeZone && this.Format == _prevFormat) return;
+
+        if (this.Time != _prevTime || this.TimeZone != _prevTimeZone) this.UpdateLocalDateTimeOffset();
+        if (this.Time != _prevTime || this.Format != _prevFormat) this.UpdateFormat();
+        this.UpdateContext();
+    }
+
+    public void Dispose()
+    {
+        this.LocalTimeZone.LocalTimeZoneChanged -= OnLocalTimeChanged;
+    }
+}
