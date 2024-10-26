@@ -8,6 +8,8 @@ A Blazor component that displays a local time text in the user's local time zone
 
 🚀 Live Demo is here: [https://demo-blazor-localtimetext-static.azurewebsites.net/](https://demo-blazor-localtimetext-static.azurewebsites.net/)
 
+This component supports all of the Blazor hosting models, including Blazor WebAssembly, Blazor Server, Blazor SSR, and Auto render mode. The live demo site above is running on the Blazor Server-side Static render mode.
+
 ## 📦 Installation
 
 ### For Blazor WebAssembly projects
