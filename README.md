@@ -41,7 +41,7 @@ You also need to register the service for the Blazor Server platform in the `Pro
 ```csharp
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 ...
-builder.Services.AddLocalTimeZoneWebAssembly();
+builder.Services.AddLocalTimeZoneServer();
 ```
 
 I recommend adding the following line to the `<head>` section of your `Pages/_Host.cshtml` or `Components/App.razor` file to initialize the user's local time zone. Otherwise, the first time the user accesses the page, the time zone will be displayed in the UTC time zone.
