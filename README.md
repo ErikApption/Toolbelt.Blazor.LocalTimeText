@@ -6,6 +6,8 @@ A Blazor component that displays a local time text in the user's local time zone
 
 ![](https://raw.githubusercontent.com/jsakamoto/Toolbelt.Blazor.LocalTimeText/refs/heads/main/.assets/social-media.png)
 
+🚀 Live Demo is here: [https://demo-blazor-localtimetext-static.azurewebsites.net/](https://demo-blazor-localtimetext-static.azurewebsites.net/)
+
 ## 📦 Installation
 
 ### For Blazor WebAssembly projects
