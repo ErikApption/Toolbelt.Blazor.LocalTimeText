@@ -1,5 +1,5 @@
 ﻿.root {
-    --nav-bar-height: 52px;
+    --nav-bar-height: 72px;
     --max-width: 800px;
     --accent-color: #7800ff;
 }
@@ -13,8 +13,10 @@ nav {
     position: fixed;
     inset: 0 0 auto 0;
     height: var(--nav-bar-height);
-    line-height: var(--nav-bar-height);
     background-color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     z-index: 1;
 }
 
@@ -23,7 +25,15 @@ nav {
         margin: 0 auto;
         font-size: 22px;
         font-weight: bold;
+        padding: 0 24px;
+        line-height: 20px;
     }
+
+        nav .banner img {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
+        }
 
 header {
     margin-top: calc(var(--nav-bar-height) + 24px);
