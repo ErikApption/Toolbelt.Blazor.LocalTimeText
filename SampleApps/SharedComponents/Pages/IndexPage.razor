@@ -37,7 +37,13 @@
             <div class="local-event-time accent-bar">
 
                 <div class="column">
-                    <LocalTimeZoneSelector />
+                    <LocalTimeZoneSelector>
+                        <ItemTemplate>
+                            <option value="@context.TimeZoneInfo.Id">
+                                @GetLocalTimeZoneSelectorOptionText(context)
+                            </option>
+                        </ItemTemplate>
+                    </LocalTimeZoneSelector>
 
                     <span class="local-event-time-text">
                         <LocalTimeText Date="2017/01/12" Time="9:45 AM" TimeZone="EDT" />
@@ -154,4 +160,9 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private static string GetLocalTimeZoneSelectorOptionText(LocalTimeZoneSelectorTemplateContext context)
+    {
+        var offset = context.TimeZoneInfo.GetUtcOffset(DateTime.Parse("2017-01-12"));
+        return $"(UTC{(offset < TimeSpan.Zero ? "-" : "+")}{offset:hh\\:mm}) {context.TimeZoneInfo.Id} ({context.TimeZoneInfo.StandardName})";
+    }
 }
