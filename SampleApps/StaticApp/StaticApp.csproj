@@ -4,15 +4,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ReferenceBy Condition=" '$(ReferenceBy)' == '' ">Package</ReferenceBy>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SharedComponents\SharedComponents.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(ReferenceBy)' == 'Package' ">
+    <PackageReference Include="Toolbelt.Blazor.LocalTimeText.Server" Version="1.0.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(ReferenceBy)' != 'Project' ">
     <ProjectReference Include="..\..\LocalTimeText.Server\Toolbelt.Blazor.LocalTimeText.Server.csproj" />
-    <!--<PackageReference Include="Toolbelt.Blazor.LocalTimeText.Server" Version="1.0.0" />-->
   </ItemGroup>
 
 </Project>

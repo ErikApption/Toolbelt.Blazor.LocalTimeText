@@ -4,8 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ReferenceBy Condition=" '$(ReferenceBy)' == '' ">Package</ReferenceBy>
   </PropertyGroup>
-
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -15,9 +15,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(ReferenceBy)' == 'Package' ">
+    <PackageReference Include="Toolbelt.Blazor.LocalTimeText" Version="1.0.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(ReferenceBy)' != 'Project' ">
     <ProjectReference Include="..\..\LocalTimeText\Toolbelt.Blazor.LocalTimeText.csproj" />
-    <!--<PackageReference Include="Toolbelt.Blazor.LocalTimeText" Version="1.0.0" />-->
   </ItemGroup>
 
 </Project>

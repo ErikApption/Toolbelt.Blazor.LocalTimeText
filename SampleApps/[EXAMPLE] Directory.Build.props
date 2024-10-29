@@ -1,0 +1,6 @@
+<Project>
+    <PropertyGroup>
+        <ReferenceBy>Package</ReferenceBy>
+        <!-- <ReferenceBy>Project</ReferenceBy> -->
+    </PropertyGroup>
+</Project>
