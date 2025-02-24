@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.Endpoints;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Components.Endpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Toolbelt.Blazor.Globalization.Internals;
 
@@ -23,10 +23,13 @@ internal class LocalTimeZoneServer : LocalTimeZone
     public LocalTimeZoneServer(IServiceProvider services) : base(services)
     {
         var componentPrerenderer = services.GetRequiredService<IComponentPrerenderer>();
+
+#pragma warning disable IL2075
         this._httpContext = componentPrerenderer
             .GetType()
             .GetProperty("HttpContext", BindingFlags.NonPublic | BindingFlags.Instance)?
             .GetValue(componentPrerenderer) as HttpContext;
+#pragma warning restore IL2075
 
         // Override the GetLocalTimeZoneAsync method to implement server-side logic
         this._BaseGetLocalTimeZoneAsync = this.GetLocalTimeZoneAsync;
