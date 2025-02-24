@@ -67,7 +67,7 @@ Add the following line to your `_Imports.razor` file:
 Then you can use the `LocalTimeText` component like this:
 
 ```html
-<LocalTimeText Time="9:00 AM" TimeZone="PST />
+<LocalTimeText Time="9:00 AM" TimeZone="PST" />
 ```
 
 The above markup means the time `9:00 AM` is in the `PST` time zone.
@@ -89,7 +89,23 @@ Name       | Type     | Description
 
 ### Customizing the display text
 
-The `LocalTimeText` component allows you to customize the entire display text in the `ChildContent`. The information about what should be displayed is provided by the `LocalTimeTextTemplateContext` object via the `context` argument.
+#### Formatting
+
+You can customize the output text formatting by specifying the `Format` parameter. For example, if you want to show the date text only in the `<LocalTimeText>` component, you can use the following code:
+
+```HTML
+<LocalTimeText Date="2025/02/24" Time="9:00 AM" TimeZone="PST" Format="yyyy-MM-dd" />
+```
+
+The above markup will show users the text like below.
+
+```
+2025-02-24
+```
+
+#### Templating
+
+The `LocalTimeText` component allows you to customize not only formatting but also the entire rendering text. You can do that by using the `ChildContent` render fragment parameter. The information about what should be displayed is provided by the `LocalTimeTextTemplateContext` object via the `context` argument.
 
 For example, the following code,
 
@@ -97,7 +113,7 @@ For example, the following code,
 <LocalTimeText Time="9:00 AM" TimeZone="PST">
   <div style="display: inline-block;">
     <div class="time-text">
-      @context.Value.ToString("HH:mm tt").ToLoawerCase()
+      @context.Value.ToString("HH:mm tt").ToLower()
     </div>
     <div class="time-zone-text">
       (@context.LocalTimeZone.DisplayName)
