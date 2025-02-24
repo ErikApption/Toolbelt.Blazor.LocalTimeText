@@ -1,2 +1,5 @@
+v.1.1.0
+- Add support for the .NET 9.0
+
 v.1.0.0
 - The 1st release.

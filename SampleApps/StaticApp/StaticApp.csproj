@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ReferenceBy Condition=" '$(ReferenceBy)' == '' ">Package</ReferenceBy>
@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(ReferenceBy)' == 'Package' ">
-    <PackageReference Include="Toolbelt.Blazor.LocalTimeText.Server" Version="1.0.0.1" />
+    <PackageReference Include="Toolbelt.Blazor.LocalTimeText.Server" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup Condition=" '$(ReferenceBy)' == 'Project' ">
     <ProjectReference Include="..\..\LocalTimeText.Server\Toolbelt.Blazor.LocalTimeText.Server.csproj" />
