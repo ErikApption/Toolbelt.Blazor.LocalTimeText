@@ -18,7 +18,7 @@
   <ItemGroup Condition=" '$(ReferenceBy)' == 'Package' ">
     <PackageReference Include="Toolbelt.Blazor.LocalTimeText" Version="1.0.0.1" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(ReferenceBy)' != 'Project' ">
+  <ItemGroup Condition=" '$(ReferenceBy)' == 'Project' ">
     <ProjectReference Include="..\..\LocalTimeText\Toolbelt.Blazor.LocalTimeText.csproj" />
   </ItemGroup>
 
