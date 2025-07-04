@@ -24,6 +24,12 @@
     public string? TimeZone { get; set; }
 
     /// <summary>
+    /// Override for the DateTime time zone of <see cref="DateTime"/> parameter. Useful when dealing with UTC DateTime values or when the time zone is not known.<br/>
+    /// </summary>
+    [Parameter]
+    public string? SourceTimeZone { get; set; }
+
+    /// <summary>
     /// The template to customize rendering the time text.
     /// </summary>
     [Parameter]
@@ -44,6 +50,8 @@
 
     private TimeZoneInfo _localTimeZone = TimeZoneInfo.Utc;
 
+    private TimeZoneInfo? _srcTimeZone = TimeZoneInfo.Utc;
+
     private LocalDateTimeTemplateContext? _context;
 
     private bool _isInitialized = false;
@@ -56,6 +64,7 @@
     protected override async Task OnInitializedAsync()
     {
         this._localTimeZone = await this.LocalTimeZone.GetLocalTimeZoneAsync(this.TimeZone);
+        this._srcTimeZone = (SourceTimeZone is null) ? null: this.LocalTimeZone.TimeZoneIdMapper.TimeZoneIdToTimeZoneInfo(this.SourceTimeZone);
         this.UpdateLocalDateTimeOffset();
         this.UpdateContext();
 
@@ -76,8 +85,22 @@
     }
 
     private void UpdateLocalDateTimeOffset()
-    {                
-        var localDateTime = TimeZoneInfo.ConvertTime(this.DateTime.UtcDateTime, this._localTimeZone);
+    {
+        DateTime utcDateTime;
+
+        if (_srcTimeZone is not null)
+        {
+            // Assume this.DateTime is in _srcTimeZone, convert to UTC
+            utcDateTime = TimeZoneInfo.ConvertTimeToUtc(this.DateTime.DateTime, _srcTimeZone);
+        }
+        else
+        {
+            // Assume this.DateTime is already UTC
+            utcDateTime = System.DateTime.SpecifyKind(this.DateTime.DateTime, DateTimeKind.Utc);
+        }
+
+
+        var localDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, this._localTimeZone);
         this._localDateTimeOffset = new DateTimeOffset(localDateTime, this._localTimeZone.GetUtcOffset(localDateTime));
     }
 
@@ -104,7 +127,8 @@
 
     private static string RenderTime(LocalDateTimeTemplateContext context)
     {
-        var input = context.Value.ToString(context.Format);
+        var localDateTime = TimeZoneInfo.ConvertTime(context.Value.UtcDateTime, context.LocalTimeZone);
+        var input = localDateTime.ToString(context.Format, System.Globalization.CultureInfo.InvariantCulture);
         if (context.LowerCaseAmPm && ContainsTimeZoneSpecifier(context.Format))
         {
             // Only lower-case the AM/PM part

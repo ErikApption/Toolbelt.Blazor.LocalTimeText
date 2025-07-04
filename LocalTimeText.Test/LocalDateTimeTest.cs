@@ -47,7 +47,7 @@ public class LocalDateTimeTest
     }
 
     [Test]
-    public void DaylightTime_to_NoSummerTime_Test()
+    public void TimezoneConversionJST_Test()
     {
         using var testContext = CreateTestContext(localTimeZone: "America/Los_Angeles");
         var format = "yyyy/MM/dd hh:mm tt zzz";
@@ -57,9 +57,27 @@ public class LocalDateTimeTest
         {
             buulder.Add(_ => _.DateTime, dto);
             buulder.Add(_ => _.Format, "h:mm tt");
+            buulder.Add(_ => _.SourceTimeZone, "JST");
         });
 
         cut.Markup.Is("12:30 PM");
+    }
+
+    [Test]
+    public void TimezoneConversion_UTCOverride_Test()
+    {
+        using var testContext = CreateTestContext(localTimeZone: "America/Los_Angeles");
+        var format = "yyyy/MM/dd hh:mm tt zzz";
+        var dto = DateTimeOffset.ParseExact("2024/11/03 04:30 AM +09:00", format, System.Globalization.CultureInfo.InvariantCulture);
+
+        var cut = testContext.RenderComponent<LocalDateTime>(buulder =>
+        {
+            buulder.Add(_ => _.DateTime, dto);
+            buulder.Add(_ => _.Format, "h:mm tt");
+            buulder.Add(_ => _.SourceTimeZone, "UTC");
+        });
+
+        cut.Markup.Is("9:30 PM");
     }
 
 
