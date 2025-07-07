@@ -15,38 +15,20 @@ This component supports all of the Blazor hosting models, including Blazor WebAs
 ### For Blazor WebAssembly projects
 
 You can install the package by executing the following command:
-
-```shell
 dotnet add package Toolbelt.Blazor.LocalTimeText
-```
-
 You also need to register the service for the Blazor WebAssembly platform in the `Program.cs`.
-
-```csharp
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 ...
 builder.Services.AddLocalTimeZoneWebAssembly();
-```
-
 ### For Blazor Server projects
 
 You should install the server version package by executing the following command:
-
-```shell
 dotnet add package Toolbelt.Blazor.LocalTimeText.Server
-```
-
 You also need to register the service for the Blazor Server platform in the `Program.cs`.
-
-```csharp
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 ...
 builder.Services.AddLocalTimeZoneServer();
-```
-
 I recommend adding the following line to the `<head>` section of your `Pages/_Host.cshtml` or `Components/App.razor` file to initialize the user's local time zone. Otherwise, the first time the user accesses the page, the time zone will be displayed in the UTC time zone.
-
-```html
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -54,31 +36,21 @@ I recommend adding the following line to the `<head>` section of your `Pages/_Ho
     <!-- 👇 Add this line -->
     <script src="_content/Toolbelt.Blazor.LocalTimeText/initialize-local-timezone.min.js"></script>
     ...
-```
-
 ## 🚀 Usage
 
 Add the following line to your `_Imports.razor` file:
-
-```csharp
 @using Toolbelt.Blazor.Globalization
-```
-
 Then you can use the `LocalTimeText` component like this:
-
-```html
 <LocalTimeText Time="9:00 AM" TimeZone="PST" />
-```
-
 The above markup means the time `9:00 AM` is in the `PST` time zone.
 
 As a result, the component will display the time in the user's local time zone. For example, if the user is in the `America/New_York` time zone, the component will display `12:00 PM`.
-
-```
 12:00 PM
-```
-
+The `LocalDateTime` component is similar, but takes a `DateTimeOffset` (or `DateTime`) object instead of separate `Date` and `Time` strings.
+<LocalDateTime DateTime="someDateTimeOffset" />
 ### Parameters
+
+#### `LocalTimeText` Parameters
 
 Name       | Type     | Description
 -----------|----------| -----------
@@ -87,29 +59,30 @@ Name       | Type     | Description
 `TimeZone` | `string` | The time zone of the `Time` parameter. The value is a time zone ID (e.g., `PST`, `Pacific Standard Time`, `America/Los_Angeles`). When this parameter is not provided, the UTC zone will be used.
 `Format`   | `string` | The format to display the time text. By default, it will infer the format from the `Time` parameter.
 
+#### `LocalDateTime` Parameters
+
+Name             | Type             | Description
+-----------------|------------------|------------
+`DateTime`       | `DateTimeOffset` | The date and time to be displayed.
+`TimeZone`       | `string`         | Optional override of the user's local time zone.
+`SourceTimeZone` | `string`         | Override for the time zone of the `DateTime` parameter. Useful when dealing with UTC `DateTime` values.
+`Format`         | `string`         | The format to display the time text. By default, it will use the general date/time pattern (short time) "g".
+`LowerCaseAmPm`  | `bool`           | If `true`, lowercases the AM/PM designator.
+
 ### Customizing the display text
 
 #### Formatting
 
 You can customize the output text formatting by specifying the `Format` parameter. For example, if you want to show the date text only in the `<LocalTimeText>` component, you can use the following code:
-
-```HTML
 <LocalTimeText Date="2025/02/24" Time="9:00 AM" TimeZone="PST" Format="yyyy-MM-dd" />
-```
-
 The above markup will show users the text like below.
-
-```
 2025-02-24
-```
 
 #### Templating
 
 The `LocalTimeText` component allows you to customize not only formatting but also the entire rendering text. You can do that by using the `ChildContent` render fragment parameter. The information about what should be displayed is provided by the `LocalTimeTextTemplateContext` object via the `context` argument.
 
 For example, the following code,
-
-```html
 <LocalTimeText Time="9:00 AM" TimeZone="PST">
   <div style="display: inline-block;">
     <div class="time-text">
@@ -120,23 +93,13 @@ For example, the following code,
     </div>
   </div>
 </LocalTimeText>
-```
-
 it will display the time and time zone in the user's local time zone, like this:
-
-```
 12:00 pm
 (Eastern Standard Time)
-```
-
 ### Local Time Zone Selector component
 
 This package also provides a component, `LocalTimeZoneSelector`, that allows the user to select the local time zone. You can use the component like this:
-
-```html
 <LocalTimeZoneSelector />
-```
-
 The `LocalTimeZoneSelector` component will display a dropdown list of time zones. When the user selects a time zone, the user's local time zone and all of the display of the `<LocalTimeText>` component on the app will be changed. By default, the result of the time zone selection is persisted in the cookie with the name "tz".
 
 ## 💡 How does it work?
@@ -168,8 +131,6 @@ Name                    | Type                | Writable | Description
 ### Notice: for the Blazor Server case
 
 When you change the name of the cookie that is to save the user's local time zone in the callback function passed to the service registration method, you should also change the `<script>` tag in the `<head>` section of your `Pages/_Host.cshtml` or `Components/App.razor` file to be added the `cookie-name` attribute to specify the same cookie name with the app runs at a server, like below.
-
-```html
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -179,7 +140,7 @@ When you change the name of the cookie that is to save the user's local time zon
         cookie-name="time-zone"></script>
         <!-- 👆 Add this attribute -->
     ...
-```
+
 
 ## 📖 Release Note
 
