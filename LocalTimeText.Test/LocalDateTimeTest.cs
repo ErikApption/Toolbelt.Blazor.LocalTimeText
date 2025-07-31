@@ -21,11 +21,11 @@ public class LocalDateTimeTest
         using var testContext = CreateTestContext(localTimeZone: "Asia/Tokyo");
         var dt = new DateTimeOffset(2024, 11, 3, 0, 30, 0, TimeSpan.Zero);
 
-        var cut = testContext.RenderComponent<LocalDateTime>(buulder =>
+        var cut = testContext.RenderComponent<LocalDateTime>(builder =>
         {
-            buulder.Add(_ => _.DateTime, dt);
-            buulder.Add(_ => _.Format, "h:mm tt");
-            buulder.Add(_ => _.LowerCaseAmPm, true);
+            builder.Add(_ => _.DateTime, dt);
+            builder.Add(_ => _.Format, "h:mm tt");
+            builder.Add(_ => _.LowerCaseAmPm, true);
         });
     
         cut.Markup.Is("9:30 am");
