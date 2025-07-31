@@ -53,11 +53,11 @@ public class LocalDateTimeTest
         var format = "yyyy/MM/dd hh:mm tt zzz";
         var dto = DateTimeOffset.ParseExact("2024/11/03 04:30 AM +09:00", format, System.Globalization.CultureInfo.InvariantCulture);
 
-        var cut = testContext.RenderComponent<LocalDateTime>(buulder =>
+        var cut = testContext.RenderComponent<LocalDateTime>(builder =>
         {
-            buulder.Add(_ => _.DateTime, dto);
-            buulder.Add(_ => _.Format, "h:mm tt");
-            buulder.Add(_ => _.SourceTimeZone, "JST");
+            builder.Add(_ => _.DateTime, dto);
+            builder.Add(_ => _.Format, "h:mm tt");
+            builder.Add(_ => _.SourceTimeZone, "JST");
         });
 
         cut.Markup.Is("12:30 PM");
